@@ -1,0 +1,43 @@
+{% extends 'layout/layout.html' %}
+{% load static %}
+
+{% block main %}
+{% url 'customer:login' as link %}
+{% include 'includes/banner.html' with title1='User_name' title2='Login' link=product_list %}
+
+    <div class="row justify-content-center">
+        <div class="col-5 bg-primary p-3">
+            <div class="pt-5">  
+                <div class="global-container">  
+                <div class="card login-form">  
+                <div class="card-body">
+                    {% if unsuccess %}
+                         <div class="text-danger text-center">Istifadeci adi veya sifre xetalidir!</div>
+                    {% endif %}
+                    <div class="card-text">  
+                        <form method='POST'>
+                            {% csrf_token %}  
+                            <div class="form-group">  
+                                 <label for="exampleInputUsername1"> Istifadeci Adi </label>  
+                                <input type="username" class="form-control form-control-sm" id="exampleInputusername1" name='username'>  
+                            </div>  
+                            <div class="form-group">  
+                                <label for="exampleInputPassword1"> Password </label>  
+                                <a href="#" style="float:right;font-size:12px;"> Forgot password? </a>  
+                                <input type="password" class="form-control form-control-sm" id="exampleInputPassword1" name='password'>  
+                            </div>  
+                            <button type="submit" class="btn btn-primary btn-block"> Sign in </button>  
+                                
+                            <div class="sign-up pt-3">  
+                                Don't have an account? <a href="#"> Create One </a>  
+                            </div>  
+                        </form>  
+                    </div>  
+                </div>  
+            </div>  
+
+            </div>  
+        </div>
+    </div>
+
+{% endblock main %}
