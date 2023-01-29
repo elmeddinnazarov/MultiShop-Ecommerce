@@ -6,6 +6,7 @@ app_name = 'ecommerce'
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('products/', views.product_list, name='product-list'),
-    path('detail/product/<int:pk>/<str:slug>', views.product_detail, name='product-detail'),
+    path('products/', views.ProductListView.as_view(), name='product-list'),
+    path('detail/product/<int:pk>/<str:slug>', views.ProductDetailView.as_view(), name='product-detail'),
+    path('review/<int:pk>/', views.review, name='review')
 ]

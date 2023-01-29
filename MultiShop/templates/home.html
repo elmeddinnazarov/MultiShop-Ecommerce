@@ -1,7 +1,30 @@
 {% extends 'layout/layout.html' %}
-{% block main %}
 {% load static %}
-    <!-- Carousel Start -->
+{% load i18n %}
+
+
+{% block title %}
+<title>{% trans "Ana Səhifə - MultiShop Axtardığınız hərşeyi tək adrestə tapın!" %}</title>
+
+{% endblock title %}
+
+
+{% block metas %}
+<meta name="keywords" content="alis veris sayti, paltarlar, online alis veris, en ucuz, en keyfiyyetli">      
+<meta name="robots" content="index, follow"> 
+<meta name="description" content="Axtardiginiz her nov paltarlari burdan tapa bilersiniz, cattirilma mumkundur. toptan qiym,etine perakende satis."> 
+<meta property="og:title" content="Ana Səhifə - MultiShop Axtardığınız hərşeyi tək adrestə tapın!"> 
+<meta property="og:description" 
+  content="Axtardığınız hərşeyi bu adrestə tapa bilərsiniz!" />
+<meta property="og:type" content="website"> 
+<meta property="og:url" content="{{request.build_absolute_uri}}"> 
+<meta property="og:image" content="{% static 'img/multishop.avif' %}">     
+<meta property="og:site_name" content="MULTISHOP" />
+{% endblock metas %}
+
+
+{% block main %}
+<!-- Carousel Start -->
     <div class="container-fluid mb-3">
         <div class="row px-xl-5">
             <div class="col-lg-8">
@@ -19,7 +42,7 @@
                                     <div class="p-3" style="max-width: 700px;">
                                         <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">{{slide.title}}</h1>
                                         <p class="mx-md-5 px-5 animate__animated animate__bounceIn">{{slide.description}}</p>
-                                        <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Shop Now</a>
+                                        <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">{% trans "Categories" %}</a>
                                     </div>
                                 </div>
                             </div>
@@ -32,9 +55,9 @@
                     <div class="product-offer mb-30" style="height: 200px;">
                         <img class="img-fluid"   src="{{campaing.image.url}}" alt="">
                         <div class="offer-text">
-                            <h6 class="text-white text-uppercase">Save {{campaing.discount|floatformat}}%</h6>
+                            <h6 class="text-white text-uppercase">{% trans "Save" %} {{campaing.discount|floatformat}}%</h6>
                             <h3 class="text-white mb-3">{{campaing.title}}</h3>
-                            <a href="" class="btn btn-primary">Shop Now</a>
+                            <a href="" class="btn btn-primary">{% trans "Shop Now" %}</a>
                         </div>
                     </div>
                 {% endfor %}
@@ -51,25 +74,25 @@
             <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                 <div class="d-flex align-items-center bg-light mb-4" style="padding: 30px;">
                     <h1 class="fa fa-check text-primary m-0 mr-3"></h1>
-                    <h5 class="font-weight-semi-bold m-0">Quality Product</h5>
+                    <h5 class="font-weight-semi-bold m-0">{% trans "Quality Product" %}</h5>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                 <div class="d-flex align-items-center bg-light mb-4" style="padding: 30px;">
                     <h1 class="fa fa-shipping-fast text-primary m-0 mr-2"></h1>
-                    <h5 class="font-weight-semi-bold m-0">Free Shipping</h5>
+                    <h5 class="font-weight-semi-bold m-0">{% trans "Free Shipping" %}</h5>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                 <div class="d-flex align-items-center bg-light mb-4" style="padding: 30px;">
                     <h1 class="fas fa-exchange-alt text-primary m-0 mr-3"></h1>
-                    <h5 class="font-weight-semi-bold m-0">14-Day Return</h5>
+                    <h5 class="font-weight-semi-bold m-0">{% trans "14-Day Return" %}</h5>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                 <div class="d-flex align-items-center bg-light mb-4" style="padding: 30px;">
                     <h1 class="fa fa-phone-volume text-primary m-0 mr-3"></h1>
-                    <h5 class="font-weight-semi-bold m-0">24/7 Support</h5>
+                    <h5 class="font-weight-semi-bold m-0">{% trans "24/7 Support" %}</h5>
                 </div>
             </div>
         </div>
@@ -79,7 +102,7 @@
 
     <!-- Categories Start -->
     <div class="container-fluid pt-5">
-        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Categories</span></h2>
+        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">{% trans "Categories" %}</span></h2>
         <div class="row px-xl-5 pb-3">
             {% for category in categories %}
                 <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
@@ -101,7 +124,7 @@
 
     <!-- Featured Products Start -->
     <div class="container-fluid pt-5 pb-3">
-        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Featured Products</span></h2>
+        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">{% trans "Featured Products" %}</span></h2>
         <div class="row px-xl-5">
             {% for product in featured_products %}
                 {% include 'includes/one_product.html' %}
@@ -123,9 +146,9 @@
                     <div class="product-offer mb-30" style="height: 300px;">
                         <img class="img-fluid"   src="{{campaing.image.url}}" alt="">
                         <div class="offer-text">
-                            <h6 class="text-white text-uppercase">Save {{campaing.discount|floatformat}}%</h6>
+                            <h6 class="text-white text-uppercase">{% trans "Save" %} {{campaing.discount|floatformat}}%</h6>
                             <h3 class="text-white mb-3">{{campaing.title}}</h3>
-                            <a href="" class="btn btn-primary">Shop Now</a>
+                            <a href="" class="btn btn-primary">{% trans "Shop Now" %}</a>
                         </div>
                     </div>
                 </div>
@@ -138,7 +161,7 @@
 
     <!-- Recent Products Start -->
     <div class="container-fluid pt-5 pb-3">
-        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Recent Products</span></h2>
+        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">{% trans "Recent Products" %}</span></h2>
         <div class="row px-xl-5">
             {% for product in recent_products %}
                 {% include 'includes/one_product.html' with product=product %}

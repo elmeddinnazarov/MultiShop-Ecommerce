@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from os import getenv #to get enviroment files
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps', # en sonda sitemap yaradildiqda elave olunur
     
     #INTERNALS
     'ecommerce',
@@ -53,6 +55,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -118,7 +121,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
+
+LANGUAGES = [
+    ('az', _('Azərbaycanca')),
+    ('tr', _('Türkce')),
+    ('en', _('English'))
+]
 
 TIME_ZONE = 'Asia/Baku'
 
@@ -126,27 +135,31 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = 'staticfiles/'
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
     ]
 
-
+STATICFILES_FINDERS = [ # static folerini avtomatiok tapsin deye elave olunur
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATICFILES_FINDERS = [ # onemlidimi deyilmi mellimnen sorus
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-]
+
 
 ############################### AWS-S3 #######################
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
@@ -158,14 +171,6 @@ AWS_QUERYSTRING_AUTH = getenv('AWS_QUERYSTRING_AUTH') == 'True'
 AWS_S3_REGION_NAME = getenv('AWS_S3_REGION_NAME')
 AWS_LOCATION = 'media'
 
-print(
-    AWS_S3_ACCESS_KEY_ID,
-AWS_S3_SECRET_ACCESS_KEY,
-AWS_STORAGE_BUCKET_NAME,
-AWS_DEFAULT_ACL,
-AWS_QUERYSTRING_AUTH,
-AWS_S3_REGION_NAME
-)
 
 AWS_S3_CUSTOM_DOMAIN = '{}.s3.{}.amazonaws.com'.format(
     AWS_STORAGE_BUCKET_NAME,
@@ -181,3 +186,9 @@ AWS_S3_CUSTOM_DOMAIN = '{}.s3.{}.amazonaws.com'.format(
 
 
 LOGIN_URL = 'customer:login' # login_requiered icinde herdefe yazmamaq ucun burada default olaraq yazilir
+
+EMAIL_HOST = getenv('EMAIL_HOST')
+EMAIL_PORT = int(getenv('EMAIL_PORT'))
+EMAIL_HOST_USER = getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_SSL = True

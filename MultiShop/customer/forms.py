@@ -3,6 +3,11 @@ from .models import Customer, Contact, Order, Purchase, OrderCoupon, BascetItem
 from django.contrib.auth.models import User
 from re import compile
 from django.template.defaultfilters import floatformat
+from django.core.mail import send_mail
+from .models import PasswordReset
+from django.conf import settings
+
+
 phone_compile = compile("^\+994\d{9}$")
 
 
@@ -59,17 +64,14 @@ class RegisterForm(forms.Form):
         phone = cleaned_data.get('phone')
         
         new_user = User.objects.create_user(
-        username = username,
-        first_name = first_name,
-        last_name = last_name,
-        email = email,
-        password = password,
-        )
+            username = username,
+            first_name = first_name,
+            last_name = last_name,
+            email = email,
+            password = password,
+            )
 
-
-        new_customer = Customer.objects.create(user=new_user, phone=phone)
-        return new_customer
-    
+        return new_user 
     
 class ContactForm(forms.ModelForm):
     class Meta:
@@ -144,3 +146,53 @@ class CheckoutForm(forms.ModelForm):
         
         bascet.delete()
         return order
+
+
+
+
+class ResetPasswordEmailForm(forms.Form):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class':'form-control'}))
+
+    
+    def clean_email(self):
+        cleaned_data = self.cleaned_data
+        email = cleaned_data.get('email')
+        if email and not User.objects.filter(email=email).exists():
+            raise forms.ValidationError('İstifadəçi tapılmadı!')
+        return email
+            
+    def send_reset_mail(self, request):
+        cleaned_data = self.cleaned_data
+        email = cleaned_data.get('email')
+        user = User.objects.get(email=email)
+        password_reset = PasswordReset(user=user)
+        url = request.build_absolute_uri(password_reset.get_absolute_url())
+        # print('get_absolute url', password_reset.get_absolute_url())
+        try:
+            send_mail(
+                'MultiShop Reset Password Validation',
+                f'Please go to the link below to reset your MultiShop Account Password.\nLink: {url}',
+                settings.EMAIL_HOST_USER,
+                [email],
+            )
+            return True
+        except Exception:
+            return False
+
+class ResetPasswordForm(forms.Form):
+    password = forms.CharField(label='New Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password_again = forms.CharField(label='New Password Again', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+    def clean(self, *args, **kwargs):
+        cleaned_data = super().clean(*args, **kwargs)
+        password = cleaned_data.get('password')
+        password_again = cleaned_data.get('password_again')
+
+        if password and password_again and password !=password_again:
+            raise forms.ValidationError('Şifrələr eyni deyil!')
+
+    def change_password(self, user):
+        password = self.cleaned_data.get('password')
+        user.set_password(password )
+        
+        

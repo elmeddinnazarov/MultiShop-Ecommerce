@@ -1,7 +1,12 @@
 from django.db import models
+from django.urls import reverse 
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.utils import timezone
+from secrets import token_urlsafe
+from datetime import timedelta
+from django.utils import timezone
+from uuid import uuid4
 # Create your models here.
 
 class Customer(models.Model):
@@ -36,6 +41,7 @@ class Contact(models.Model):
     email = models.EmailField(max_length=50)
     subject = models.CharField(max_length=50)
     message = models.TextField(max_length=500)
+    created = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.name
@@ -156,3 +162,37 @@ class Purchase(models.Model):
     class Meta:
         verbose_name = "Satin Alinan"
         verbose_name_plural = "Satin Alinanlar"
+        
+        
+        
+class PasswordReset(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    expiry = models.DateField(null=True, blank=True)
+    uuid = models.UUIDField(default=uuid4)
+    token = models.TextField(null=True, blank=True)
+    used = models.BooleanField(default=False)
+
+    
+    def save(self, *args, **kwargs):
+        self.expiry = timezone.localdate() + timedelta(days=1)
+        self.token = token_urlsafe(100)
+        super().save(*args, **kwargs)
+
+    def is_valid(self):
+        return not self.used and self.expiry > timezone.localdate()
+       
+    def get_absolute_url(self):
+        # print('TOKEN BURDA', self.token)
+        thisurl =  reverse('customer:reset-password', kwargs= {'uuid': self.uuid, 'token': self.token})
+        return thisurl
+        
+    
+    def __str__(self):
+        return self.user.get_full_name()
+
+
+class BulkMail(models.Model):
+     subject = models.CharField(max_length=100)
+     content = models.TextField()
+     customers = models.ManyToManyField(Customer)
+     created = models.DateField(auto_now_add=True)

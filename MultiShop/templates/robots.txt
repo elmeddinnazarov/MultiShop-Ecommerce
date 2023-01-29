@@ -1,0 +1,7 @@
+User-Agent: *
+Dissallow: {% url 'customer:bascet' %}
+Dissallow: {% url 'customer:checkout' %}
+Dissallow: {% url 'customer:wishlist' %}
+Dissallow: {% url 'customer:profile' %}
+
+Sitemap:  https://{{request.get_host}}{% url 'django.contrib.sitemaps.views.sitemap' %}

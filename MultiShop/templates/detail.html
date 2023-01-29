@@ -1,5 +1,6 @@
 {% extends 'layout/layout.html' %}
 {% load static %}
+{% load producthelper %}
 {% block main %}
 {% url 'ecommerce:product-list' as link %}
 
@@ -18,6 +19,13 @@
                                 width: 100%;
                                 object-fit: cover;
                                 object-position: top;
+                            }
+                            .user-reviews{
+                                max-height: 400px;
+                                overflow: auto;
+                            }
+                            .fa-star{
+                                cursor: pointer;
                             }
                         </style>
                         {% for productimage in product.images.all %}
@@ -46,15 +54,11 @@
                     <h3>{{product.title}}</h3>
                     <div class="d-flex mb-3">
                         <div class="text-primary mr-2">
-                            <small class="fas fa-star"></small>
-                            <small class="fas fa-star"></small>
-                            <small class="fas fa-star"></small>
-                            <small class="fas fa-star-half-alt"></small>
-                            <small class="far fa-star"></small>
+                            {% stars product.average_star_count %}
                         </div>
                         <small class="pt-1">({{product.reviews}})</small>
                     </div>
-                    <h3 class="font-weight-semi-bold mb-4">{{product.new_price|floatformat:2}} AZN</h3>
+                    <h3 class="font-weight-semi-bold mb-4">{% price_text request product.new_price %}</h3>
                     <p class="mb-4">{{product.description | safe }}</p>
 
 
@@ -123,7 +127,7 @@
                 <div class="bg-light p-30">
                     <div class="nav nav-tabs mb-4">
                         <a class="nav-item nav-link text-dark active" data-toggle="tab" href="#tab-pane-1">Description</a>
-                        <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-3">Reviews (0)</a>
+                        <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-3">Reviews ({{all_reviews_count}})</a>
                     </div>
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="tab-pane-1">
@@ -132,54 +136,68 @@
                         </div>
                         <div class="tab-pane fade" id="tab-pane-3">
                             <div class="row">
-                                <div class="col-md-6">
-                                    <h4 class="mb-4">1 review for "Product Name"</h4>
-                                    <div class="media mb-4">
-                                        <img src="{% static 'img/user.jpg' %}" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
-                                        <div class="media-body">
-                                            <h6>John Doe<small> - <i>01 Jan 2045</i></small></h6>
-                                            <div class="text-primary mb-2">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star-half-alt"></i>
-                                                <i class="far fa-star"></i>
+                                <div class="col-md-6  user-reviews">
+                                    <h4 class="mb-4">{{all_reviews_count}} review for "{{product.title}}"</h4>
+                                    {% for review in reviews %}
+                                        <div class="media mb-4">
+                                            <img src="{% static 'img/user.jpg' %}" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
+                                            <div class="media-body">
+                                                <h6>{{review.customer.user.get_full_name}}<small> - <i>{{review.created}}</i></small></h6>
+                                                <div class="text-primary mb-2">
+                                                    {%stars product.average_star_count%}
+                                                </div>
+                                                <p>{{review.comment}}</p>
                                             </div>
-                                            <p>Diam amet duo labore stet elitr ea clita ipsum, tempor labore accusam ipsum et no at. Kasd diam tempor rebum magna dolores sed sed eirmod ipsum.</p>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                {% if request.user.is_authenticated %}
+                                    {% if customer_review %}
+                                    <div class="col-md-6">
+                                        <h4 class="mb-4">Your Review </h4>
+                                        <div class="media mb-4">
+                                            <img src="{% static 'img/user.jpg' %}" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
+                                            <div class="media-body">
+                                                <h6>{{customer_review.customer.user.get_full_name}}<small> - <i>{{customer_review.created}}</i></small></h6>
+                                                <div class="text-primary mb-2">
+                                                    {%stars customer_review.star_count%}
+                                                </div>
+                                                <p>{{customer_review.comment}}</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h4 class="mb-4">Leave a review</h4>
-                                    <small>Your email address will not be published. Required fields are marked *</small>
-                                    <div class="d-flex my-3">
-                                        <p class="mb-0 mr-2">Your Rating * :</p>
-                                        <div class="text-primary">
-                                            <i class="far fa-star"></i>
-                                            <i class="far fa-star"></i>
-                                            <i class="far fa-star"></i>
-                                            <i class="far fa-star"></i>
-                                            <i class="far fa-star"></i>
+                                    {% else %}
+                                        <div class="col-md-6">
+                                            <h4 class="mb-4">Leave a review</h4>
+                                            <small>Your email address will not be published. Required fields are marked *</small>
+                                            <div class="d-flex my-3">
+                                                <p class="mb-0 mr-2">Your Rating * :</p>
+                                                <div class="text-primary star-list">
+                                                    <i id = "star-1" data-order= "1" class="far fa-star"></i>
+                                                    <i id = "star-2" data-order= "2" class="far fa-star"></i>
+                                                    <i id = "star-3" data-order= "3" class="far fa-star"></i>
+                                                    <i id = "star-4" data-order= "4" class="far fa-star"></i>
+                                                    <i id = "star-5" data-order= "5" class="far fa-star"></i>
+                                                </div>
+                                            </div>
+                                            <form method="post" action="{% url 'ecommerce:review' pk=product.pk %}">
+                                                {% csrf_token %}
+                                                <div class="form-group">
+                                                    <label for="message">Your Review *</label>
+                                                    <textarea id="message" cols="30" rows="5" name="comment" class="form-control"></textarea>
+                                                </div>
+                                                <input type="hidden" name="star-count" id="star-count">
+                                                <div class="form-group mb-0">
+                                                    <input type="submit" value="Leave Your Review" class="btn btn-primary px-3">
+                                                </div>
+                                            </form>
                                         </div>
-                                    </div>
-                                    <form>
-                                        <div class="form-group">
-                                            <label for="message">Your Review *</label>
-                                            <textarea id="message" cols="30" rows="5" class="form-control"></textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="name">Your Name *</label>
-                                            <input type="text" class="form-control" id="name">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="email">Your Email *</label>
-                                            <input type="email" class="form-control" id="email">
-                                        </div>
-                                        <div class="form-group mb-0">
-                                            <input type="submit" value="Leave Your Review" class="btn btn-primary px-3">
-                                        </div>
-                                    </form>
-                                </div>
+                                    {% endif %}
+                                
+                                {% else %}    
+                                    <h6 class="mt-4 ml-2">Please <a href="{% url 'customer:login' %}">Login</a> or <a href="{% url 'customer:register' %}">Register</a> to comment.</h6>
+
+                                {% endif %}    
                             </div>
                         </div>
                     </div>
@@ -218,7 +236,7 @@
                                 <small class="fa fa-star text-primary mr-1"></small>
                                 <small class="fa fa-star text-primary mr-1"></small>
                                 <small class="fa fa-star text-primary mr-1"></small>
-                                <small>(99)</small>
+                                <small>({{ product.review_set.count}})</small>
                             </div>
                         </div>
                     </div>
@@ -332,3 +350,8 @@
     </div>
     <!-- Products End -->
 {% endblock main %}
+
+
+{% block scripts %}
+<script src="{% static 'ecommerce/product-detail/product-detail.js' %}"></script>
+{% endblock scripts %}

@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.forms import TextInput, Textarea
+from django.db import models
 from .models import (
     Category, 
     Product, 
@@ -19,11 +21,11 @@ class ReviewAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Istifadeci Deyerlendirmesi', {
             "fields": (
-                ['customer', 'product', 'star_count', 'created']
+                ['customer', 'product', 'star_count', 'comment', 'created']
             ),
         }),
     )
-    readonly_fields = ['customer', 'product', 'star_count', 'created']
+    readonly_fields = ['created']
     
     
 class ReviewInline(admin.TabularInline):
@@ -57,7 +59,7 @@ class ProductAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Ilkin Melumatlar', {
-            "fields": ['title', 'slug', ('old_price', 'new_price'), 'category'],
+            "fields": [('title_az', 'title_tr', 'title_en'), 'slug', ('old_price', 'new_price'), 'category', 'campaings'],
            
         }),  
               
@@ -69,6 +71,11 @@ class ProductAdmin(admin.ModelAdmin):
             "fields": [('updated', 'created'), 'featured'] 
         }),
     )
+    formfield_overrides = {
+        models.TextField: {'widget': Textarea(attrs={'rows':2, 'cols':30})},
+        }  
     
     readonly_fields = ['updated', 'created', 'product_cover', 'slug']
     inlines = [ProductImageInline, ReviewInline]
+    
+    

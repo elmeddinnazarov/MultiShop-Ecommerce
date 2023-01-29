@@ -1,0 +1,177 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-22 18:48+0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: MultiShop/settings.py:126
+msgid "Azərbaycanca"
+msgstr ""
+
+#: MultiShop/settings.py:127
+msgid "Türkce"
+msgstr ""
+
+#: MultiShop/settings.py:128
+msgid "English"
+msgstr ""
+
+#: templates/home.html:23 templates/home.html:83
+#: templates/layout/layout.html:120
+msgid "Categories"
+msgstr "Kateqoryalar"
+
+#: templates/home.html:36 templates/home.html:127
+msgid "Save"
+msgstr "Qənaət Et"
+
+#: templates/home.html:38 templates/home.html:129
+msgid "Shop Now"
+msgstr "İndi Al"
+
+#: templates/home.html:55
+msgid "Quality Product"
+msgstr "Keyyfiyyətli Məhsullar"
+
+#: templates/home.html:61
+msgid "Free Shipping"
+msgstr "Pulsuz Çattırılma"
+
+#: templates/home.html:67
+msgid "14-Day Return"
+msgstr "14-Gün Geri Qaytarma"
+
+#: templates/home.html:73
+msgid "24/7 Support"
+msgstr "24/7 Dəstək"
+
+#: templates/home.html:105
+msgid "Featured Products"
+msgstr "Önə Çıxan Məhsullar"
+
+#: templates/home.html:142
+msgid "Recent Products"
+msgstr "Ən Yeni Məhsullar"
+
+#: templates/layout/layout.html:11
+msgid "Online Shop Website"
+msgstr "Online Aliş-Veriş Saytı"
+
+#: templates/layout/layout.html:49
+msgid "Sign in"
+msgstr "Giriş Et"
+
+#: templates/layout/layout.html:50
+msgid "Sign up"
+msgstr "Qeydiyyatdan Keç"
+
+#: templates/layout/layout.html:107
+msgid "Customer Service"
+msgstr "Müştəri Xidmətləri"
+
+#: templates/layout/layout.html:137 templates/layout/layout.html:186
+#: templates/layout/layout.html:197
+msgid "Home"
+msgstr "Ana Səifə"
+
+#: templates/layout/layout.html:138
+msgid "Shop"
+msgstr "Məhsullar"
+
+#: templates/layout/layout.html:139
+msgid "Contact"
+msgstr "Əlaqə"
+
+#: templates/layout/layout.html:157
+msgid "Profile"
+msgstr "Profil"
+
+#: templates/layout/layout.html:158
+msgid "Logout"
+msgstr "Çıxış"
+
+#: templates/layout/layout.html:175
+msgid "Get In Touch"
+msgstr "Əlaqə Məlumatları"
+
+#: templates/layout/layout.html:176
+msgid ""
+"No dolore ipsum accusam no lorem. Invidunt sed clita kasd clita et et dolor "
+"sed dolor. Rebum tempor no vero est magna amet no"
+msgstr ""
+
+#: templates/layout/layout.html:177
+msgid "123 Street, New York, USA"
+msgstr ""
+
+#: templates/layout/layout.html:184
+msgid "Site Map"
+msgstr "Sayt Xəritəsi"
+
+#: templates/layout/layout.html:187 templates/layout/layout.html:198
+msgid "Our Shop"
+msgstr "Mağazamız"
+
+#: templates/layout/layout.html:188 templates/layout/layout.html:199
+msgid "Shop Detail"
+msgstr "Haqqında"
+
+#: templates/layout/layout.html:189 templates/layout/layout.html:200
+msgid "Shopping Cart"
+msgstr "Kart"
+
+#: templates/layout/layout.html:190 templates/layout/layout.html:201
+msgid "Checkout"
+msgstr "Ödəmə Ekranı"
+
+#: templates/layout/layout.html:191 templates/layout/layout.html:202
+msgid "Contact Us"
+msgstr "Bizimlə Əlaqə"
+
+#: templates/layout/layout.html:195
+msgid "My Account"
+msgstr "Profil"
+
+#: templates/layout/layout.html:206
+msgid "Subscribe"
+msgstr "Abunə Ol"
+
+#: templates/layout/layout.html:207
+msgid "Duo stet tempor ipsum sit amet magna ipsum tempor est"
+msgstr ""
+
+#: templates/layout/layout.html:212
+msgid "Sign Up"
+msgstr "Giriş"
+
+#: templates/layout/layout.html:216
+msgid "Follow Us"
+msgstr "Bizi İzləyin"
+
+#: templates/layout/layout.html:230
+msgid "multishop.com"
+msgstr ""
+
+#: templates/layout/layout.html:230
+msgid "All Rights Reserved."
+msgstr "Bütün Hüquqları Qorunur"
+
+#~ msgid "Newsletter"
+#~ msgstr "Abunə Ol"
+
+#~ msgid "Turkish"
+#~ msgstr "Türkce"

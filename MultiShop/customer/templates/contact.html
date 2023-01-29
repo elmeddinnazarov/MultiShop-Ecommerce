@@ -1,5 +1,6 @@
 {% extends 'layout/layout.html' %}
 {% load static %}
+{% load i18n %}
 {% block main %}
 {% url 'customer:contact' as link %}
 
@@ -11,11 +12,19 @@
         <div class="row px-xl-5">
             <div class="col-lg-7 mb-5">
                 <div class="contact-form bg-light p-30">
-                    
+                    {% if  status == 'success'%}
+                        <div class="alert alert-success " role="alert">
+                            {% trans "Mesajınız müvəffəqiyyətlə göndərildi!" %}
+                        </div>
+                    {% elif status == 'fail' %}
+                        <div class="alert alert-danger" role="alert">
+                            {% trans "Mesajınız göndərilirkən xəta başverdi!" %}
+                        </div>
+                    {% endif %}
                     <div id="success"></div>
                     <p class="help-block text-danger">{{form.non_field_errors}}</p>
 
-                    <form method='POST'>
+                    <form id="contact-form" method='POST'>
                         {% csrf_token %}
 
                         {% for field in form %}
@@ -27,8 +36,13 @@
                             </div>
                         {% endfor %}
                         <div>
-                            <button class="btn btn-primary py-2 px-4" type="submit" id="sendMessageButton">Send
-                                Message</button>
+                            <button 
+                            class="btn btn-primary py-2 px-4 g-recaptcha" 
+                            data-sitekey="6LeuASckAAAAAL-vZiOHRG9nAZLRt-9DDAl8fPhF " 
+                            data-callback='onSubmit' 
+                            data-action='submit'
+                            >
+                            Send Message</button>
                         </div>
                     </form>
                 </div>
@@ -49,3 +63,16 @@
     </div>
     <!-- Contact End -->
 {% endblock main %}
+
+
+{% block scripts %}
+
+<script src="https://www.google.com/recaptcha/api.js"></script>
+
+<script>
+    function onSubmit(token) {
+      document.getElementById("contact-form").submit();
+    }
+  </script>
+
+{% endblock scripts %}

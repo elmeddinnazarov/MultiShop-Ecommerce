@@ -1,23 +1,41 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from.forms import RegisterForm, ContactForm, CheckoutForm
+from.forms import (
+    RegisterForm, ContactForm, CheckoutForm, ResetPasswordEmailForm, ResetPasswordForm
+    )
 from django.contrib.auth import login, logout, authenticate
 from .models import (
-    Contact, Customer, Wishlist, BascetItem, Order, Coupon )
+    Contact, Customer, Wishlist, BascetItem, Order, Coupon, PasswordReset
+    )
 from ecommerce.models import Product
 from django.contrib.auth.decorators import login_required
 from django.db.models import F, Sum
+from django.views.generic import TemplateView, View, ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+import requests
+import os
 # Create your views here.
 
+RECAPTCHA_SECRET_KEY = os.getenv('RECAPTCHA_SECRET_KEY')
 
-
-def contact(request):
-    form = ContactForm()
-    if request.method == 'POST':
+class ContactView(View):
+    def get(self, request):
+        form = ContactForm()
+        return render(request, 'contact.html', context={'form': form})
+    
+    def post(self, request):
         form = ContactForm(data=request.POST)
-        if form.is_valid():
+        response = requests.post('https://www.google.com/recaptcha/api/siteverify', {
+            'secret': RECAPTCHA_SECRET_KEY,
+            'response': request.POST.get('g-recaptcha-response')
+        })
+        recaptcha_respose = response.json()
+        success = recaptcha_respose.get('success')
+        score = recaptcha_respose.get('score')
+        if form.is_valid() and success and score > 0.7:
             form.save()
-            return redirect('ecommerce:home')
-    return render(request, 'contact.html', context={'form': form})
+            return render(request, 'contact.html', context={'form': ContactForm(), 'status': 'success'})
+        return render(request, 'contact.html', context={'form': form, 'status': 'fail'})
+
 
 def confirm_contact(request):
     if request.method == 'GET':
@@ -37,10 +55,13 @@ def login_view(request):
     elif request.method == 'POST':
          username = request.POST.get('username')
          password  = request.POST.get('password')
+         remember_me = request.POST.get('remember_me')
          user = authenticate(username=username, password=password)
          if user:
              login(request, user)
              nextUrl = request.GET.get('next')
+             if not remember_me:
+                 request.session.set_expiry(0)
              return redirect(nextUrl or 'ecommerce:home')
          else:
             return render(request, 'login.html', context={'unsuccess': True })
@@ -58,8 +79,8 @@ def register(request):
         form = RegisterForm(data=request.POST)
         accepted = request.POST.get('accepted')
         if form.is_valid() and accepted:
-            customer = form.save()
-            login(request, customer.user)
+            user = form.save()
+            login(request, user)
             return redirect('ecommerce:home')
         elif not accepted:
             return render(request, 'register.html', context={'form': form, 'not_accepted': True})
@@ -74,12 +95,15 @@ def profile(request):
         pass
             
   
-  
-@login_required
-def wishlist(request):
-    customer = request.user.customer
-    wishlist = customer.wishlist_set.all()
-    return render(request, 'wishlist.html', context={'wishlist': wishlist})
+
+
+class WishlistView(LoginRequiredMixin, ListView):
+    context_object_name = 'wishlist'
+    template_name = 'wishlist.html'
+    def get_queryset(self):
+        customer = self.request.user.customer
+        return customer.wishlist_set.all()
+    
       
 @login_required
 def add_to_wish(requset, pk):
@@ -241,8 +265,65 @@ def checkout(request):
         # checkout.save()
         # return redirect('customer:basket')
         
+currency_eq = {'USD': 0.59, 'TRY': 11, 'EUR': 0.56, 'AZN': 1}
+def change_currency(request, currency):
+    request.session['currency'] = currency
+    request.session['currency_ratio'] = currency_eq.get(currency)
+    
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+def reset_password(request, uuid, token):
+    password_reset = get_object_or_404(PasswordReset, uuid=uuid)
+    if password_reset.is_valid(token):
+        form = ResetPasswordForm()
+        if request.method == 'POST':
+            form = ResetPasswordForm(request.POST)
+            if form.is_valid():
+                form.change_password(password_reset.user)
+                # print('SIfre deyisdirilid', password_reset.user)
+                return redirect('customer:login', password_changed=True)
+
+        # print('SIfre deyisdirilmedi!!!')
+        return render(request, 'reset-password.html', {'form': form})
+    return render(request, 'reset-password.html', {'form': form, 'password_changed': False})
+
+    # return redirect('customer:reset-password-notf', color='danger', message='Xəta baş verdi!')
+
+
+
+
+def reset_password_email(request):
+    form = ResetPasswordEmailForm()
+    if request.method == 'POST':
+        form = ResetPasswordEmailForm(request.POST)
+        if form.is_valid():
+            result = form.send_reset_mail(request)
+            if result:
+                return redirect('customer:login') # email_send = True gondermeliyem getmedi
+            else:
+                return render(request, 'reset-password-email.html', {'form': form, 'email_send': False})
+    return render(request, 'reset-password-email.html', {'form': form})
+
+
+
+
+
+
+
+# def reset_password_notf(request, color, message):
+    
+#     return render(request, 'reset-password-notf.html', {'auth': True})
+
+
+
+
+
+
+# class ResetPasswordNotView(TemplateView):
+#     template_name = 'reset-password-notf.html'
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context.update(self.kwargs)
+    #     return context
         
-        
-
-
-

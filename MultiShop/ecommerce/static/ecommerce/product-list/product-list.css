@@ -1,0 +1,13 @@
+.filter-parent {
+    position: relative;
+}
+
+.filter-button {
+width: 80%;
+text-align: center;
+padding: 10px 20px;
+margin: auto;
+background-color: #FFC801;
+color: #3D464C;
+cursor: pointer;
+}

@@ -6,6 +6,8 @@ from django.utils.html import format_html
 from ckeditor.fields import RichTextField
 from imagekit.models.fields import ProcessedImageField
 from .utils import convert_slug
+from django.db.models import Avg
+from django.utils.translation import get_language
 # Create your models here.
 
 
@@ -26,6 +28,10 @@ class Category(models.Model):
     def is_super(self):
         return self.category_set.exists()
     
+    def get_absolute_url(self):
+        return reverse("ecommerce:product-list") + f'?category={self.pk}'
+    
+    
     
     @display(description='Kateqorya sekili')
     def category_image(self):
@@ -43,9 +49,14 @@ class Campaing(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse("ecommerce:product-list") + f'?campaings={self.pk}'
+    
     class Meta:
         verbose_name = "Kampanya"
         verbose_name_plural = "Kampanyalar"
+        
+        
     
 class Size (models.Model):
     title = models.CharField(max_length=10)
@@ -69,7 +80,9 @@ class Color (models.Model):
         verbose_name_plural = "Rənglər"
         
 class Product(models.Model):
-    title = models.CharField(max_length=100, verbose_name='Başlıq')
+    title_az = models.TextField(max_length=100, verbose_name='Başlıq')
+    title_tr = models.TextField(max_length=100, null=True, blank=True, verbose_name='Başlık')
+    title_en = models.TextField(max_length=100, null=True, blank=True, verbose_name='Title')
     slug = models.SlugField(null=True, blank=True)
     description = RichTextField(max_length=200, verbose_name='Məzmun')
     content = RichTextField(verbose_name='Haqqinda')
@@ -79,7 +92,7 @@ class Product(models.Model):
     colors = models.ManyToManyField(Color)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Kateqorya')
     cover = ProcessedImageField(upload_to='products/product-cover-images/', format='JPEG', options={'quality': 60}, verbose_name='Qapaq Sekili')
-    campaings = models.ManyToManyField(Campaing, related_name='products')
+    campaings = models.ManyToManyField(Campaing, blank=True)
     featured = models.BooleanField(default=False)
     updated = models.DateField(auto_now=True, verbose_name='Yenilənmə Tarixi')
     created = models.DateField(auto_now_add=True, verbose_name='Yerləşdirilmə Tarixi')
@@ -105,7 +118,20 @@ class Product(models.Model):
             self.slug = convert_slug(self.title)
         super().save(*args, **kwargs)
 
-
+    @property
+    def title(self):
+        lang = get_language()
+        title = getattr(self, 'title_' + lang)
+        return title or self.title_az
+    
+    @property
+    def average_star_count(self):
+        reviews = self.review_set.all()
+        if reviews:
+            result = self.review_set.all().aggregate(average=Avg('star_count')).get('average')
+        else:
+            return 0
+        return result
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
@@ -123,7 +149,8 @@ class ProductImage(models.Model):
     
 
 class Review(models.Model):
-    customer = models.ForeignKey('customer.Customer', on_delete=models.CASCADE)
+    customer = models.ForeignKey('customer.Customer', on_delete=models.CASCADE, validators=[MaxValueValidator(5), MinValueValidator(1)])
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    star_count = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    star_count = models.IntegerField()
+    comment = models.TextField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)

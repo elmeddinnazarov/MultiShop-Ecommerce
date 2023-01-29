@@ -16,9 +16,25 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
+from django.conf.urls.i18n import i18n_patterns
+from django.shortcuts import render
+from django.contrib.sitemaps.views import sitemap
+from .sitemaps import StaticViewSitemap, ProductSitemap
+from django.views.generic import TemplateView
+
+sitemaps = {
+    'static': StaticViewSitemap,
+    'products': ProductSitemap
+}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('i18n/', include('django.conf.urls.i18n')),
+    #path('robots.txt/', lambda request: render(request, 'robots.txt', content_type='text/plain')), | alttaki setirnen eyni islevi gorur.
+    path('robots.txt/', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps},
+     name='django.contrib.sitemaps.views.sitemap')
+] + i18n_patterns(
     path('', include('ecommerce.urls')),
-    path('', include('customer.urls'))
-]
+    path('customer/', include('customer.urls'))
+)

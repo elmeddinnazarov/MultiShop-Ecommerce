@@ -11,10 +11,20 @@
                 <div class="global-container">  
                 <div class="card login-form">  
                 <div class="card-body">
+
                     {% if unsuccess %}
-                         <div class="text-danger text-center">Istifadeci adi veya sifre xetalidir!</div>
+                         <div class="alert alert-danger " role="alert">Istifadeci adi veya sifre xetalidir!</div>
                     {% endif %}
-                    <div class="card-text">  
+
+                    {% if email_send %}
+                        <div class="alert alert-success " role="alert">Şifrə sıfırlama keçid linki mail adresinizə uğurla göndərildi!</div>
+                    {% endif %}
+
+                    {% if password_changed %}
+                        <div class="alert alert-success " role="alert">Şifrəniz uğurla dəyişdirildi!</div>
+                   {% endif %}
+
+                    <div class="card-text">
                         <form method='POST'>
                             {% csrf_token %}  
                             <div class="form-group">  
@@ -23,13 +33,18 @@
                             </div>  
                             <div class="form-group">  
                                 <label for="exampleInputPassword1"> Password </label>  
-                                <a href="#" style="float:right;font-size:12px;"> Forgot password? </a>  
+                                <a href="{% url 'customer:reset-password-email' %}" class="sign-up" style="float:right"> Forgot password? </a>  
                                 <input type="password" class="form-control form-control-sm" id="exampleInputPassword1" name='password'>  
+
                             </div>  
                             <button type="submit" class="btn btn-primary btn-block"> Sign in </button>  
                                 
                             <div class="sign-up pt-3">  
-                                Don't have an account? <a href="#"> Create One </a>  
+                                Don't have an account? <a href="{% url 'customer:register' %}"> Create One </a>  
+                                <span style="float:right;" class="sign-up">
+                                    <input type="checkbox"  class="form-check-input" id="exampleCheck1" name="remember_me">
+                                    <label for="exampleCheck1" class="form-check-label" ><a href="#" >Remember Me</a></label>
+                                </span>
                             </div>  
                         </form>  
                     </div>  

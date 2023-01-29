@@ -7,7 +7,9 @@ from .models import (
     Order,
     Purchase,
     OrderCoupon,
-    Coupon
+    Coupon,
+    PasswordReset,
+    BulkMail
 )
 # Register your models here.
 
@@ -64,8 +66,15 @@ class CouponAdmin(admin.ModelAdmin):
 
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
-    fields = ['name', 'email', 'subject', 'message']
-    readonly_fields = ['name', 'email', 'subject', 'message']
+    fields = ['name', 'email', 'subject', 'message', 'created']
+    readonly_fields = ['created']
+
+
+
+@admin.register(PasswordReset)
+class PasswordResetAdmin(admin.ModelAdmin):
+    fields = ['user', 'expiry', 'uuid', 'token', 'used']
+    readonly_fields = ['expiry', 'uuid', 'token']
 
 
 
@@ -79,3 +88,18 @@ class BascetItemAdmin(admin.ModelAdmin):
     fields = ['customer', 'product', 'size', 'color', 'quantity', 'created']
     readonly_fields = ['customer', 'created']
     
+
+
+@admin.register(BulkMail)
+class BulkMailAdmin(admin.ModelAdmin):
+    fields = ['subject','content','customers','created']
+    readonly_fields = ['created']
+    
+
+
+
+
+
+
+
+

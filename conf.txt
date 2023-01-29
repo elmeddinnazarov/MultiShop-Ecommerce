@@ -1,0 +1,34 @@
+server {
+    lister 443;
+    server_name www.multishoponline.online;
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /staticfiles/ {
+        root/home/sammy/myproject;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http;//unix:/home/sammy/myproject/myproject.sock;
+    }
+}
+
+
+
+server {
+    lister 80;
+    server_name www.multishoponline.online multishoponline.online;
+    if ($host = multishoponline.online) {
+        return 301 https://www.multishoponline.online$uri
+    }
+    if ($host = www.multishoponline.online) {
+        return 301 https://www.multishoponline.online$uri
+    }
+}
+
+server {
+    lister 443;
+    server_name multishoponline.online;
+    if ($host = multishoponline.online) {
+        return 301 https://www.multishoponline.online$uri
+    }
+}
