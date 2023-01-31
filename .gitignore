@@ -2,5 +2,4 @@ multi_DB
 multi_env
 .env
 activate
-text.txt
 staticfiles
